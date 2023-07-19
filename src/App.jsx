@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useProduct } from "./hooks/useProduct";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { data } = useProduct();
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="min-vw-90 ">
+        <table className="table table-striped ">
+          <thead>
+            <tr>
+              <th className="col">Title</th>
+              <th className="col">Category</th>
+              <th className="col">Stock</th>
+              <th className="col">Brand</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((product) => (
+              <tr>
+                <td>{product.title}</td>
+                <td>{product.category}</td>
+                <td>{product.stock}</td>
+                <td>{product.brand}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
