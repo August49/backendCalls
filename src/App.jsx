@@ -2,12 +2,12 @@ import "./App.css";
 import { useProduct } from "./hooks/useProduct";
 
 function App() {
-  const { data } = useProduct();
+  const { data, handleDelete, handleUpdate } = useProduct();
 
   return (
     <>
-      <div className="min-vw-90 ">
-        <table className="table table-striped ">
+      <div className="min-vw-90">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th className="col">Title</th>
@@ -18,11 +18,27 @@ function App() {
           </thead>
           <tbody>
             {data.map((product) => (
-              <tr>
+              <tr key={product.id}>
                 <td>{product.title}</td>
                 <td>{product.category}</td>
                 <td>{product.stock}</td>
                 <td>{product.brand}</td>
+                <td>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleUpdate(product)}
+                  >
+                    Update
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(product)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

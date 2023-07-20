@@ -1,27 +1,67 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiClient } from "../apiConfig/apiClient";
 
-export default function useData(endpoint) {
+export const useData = (endpoint) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    const controller = new AbortController();
+
+  const fetchData = (signal) => {
     setIsLoading(true);
     apiClient
-      .get(endpoint, { signal: controller.signal })
+      .get(endpoint, { signal: signal })
       .then((res) => {
         setIsLoading(false);
-        console.log(res.data);
         setData(res.data.products);
       })
       .catch((error) => {
         setIsLoading(false);
         setError(error);
       });
+  };
+
+  const deleteProduct = (productId) => {
+    const originalProduct = [...data];
+
+    setData((prevData) =>
+      prevData.filter((product) => product.id !== productId)
+    );
+
+    apiClient
+      .delete(`/products/${productId}`)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        setData(originalProduct);
+        setError(error);
+      });
+  };
+  const updateProduct = (product) => {
+    const originalProduct = [...data];
+
+    setData((prevData) =>
+      prevData.filter((product) => product.id == productId)
+    );
+
+    apiClient
+      .delete(`/products/${productId}`)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        setData(originalProduct);
+        setError(error);
+      });
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    fetchData(signal);
 
     return () => controller.abort();
-  }, []);
+  }, [endpoint]);
 
-  return { data, error, isLoading };
-}
+  return { data, error, isLoading, deleteProduct, updateProduct };
+};
