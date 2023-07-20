@@ -1,10 +1,10 @@
 // useProduct.js
 import { useData } from "./useData";
-import { useState } from "react";
 
 export const useProduct = () => {
-  const endpoint = "/products";
-  const { data, deleteProduct, error, isLoading } = useData(endpoint);
+  const endpoint = "/";
+  const { data, error, isLoading, deleteProduct, updateProduct, addProduct } =
+    useData(endpoint);
 
   const handleDelete = (item) => {
     deleteProduct(item.id);
@@ -12,10 +12,12 @@ export const useProduct = () => {
 
   const handleUpdate = (item) => {
     console.log(item);
+    updateProduct(item);
   };
 
   const handleAdd = (item) => {
     console.log(item);
+    addProduct(item);
   };
 
   return { data, error, isLoading, handleDelete, handleUpdate, handleAdd };

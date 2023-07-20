@@ -12,7 +12,11 @@ export const useData = (endpoint) => {
       .get(endpoint, { signal: signal })
       .then((res) => {
         setIsLoading(false);
-        setData(res.data.products);
+        if (endpoint === "/") {
+          setData(res.data.products);
+        } else {
+          setData(res.data);
+        }
       })
       .catch((error) => {
         setIsLoading(false);
@@ -28,7 +32,7 @@ export const useData = (endpoint) => {
     );
 
     apiClient
-      .delete(`/products/${productId}`)
+      .delete(`/${productId}`)
       .then((res) => {
         console.log(res.data);
       })
@@ -37,20 +41,56 @@ export const useData = (endpoint) => {
         setError(error);
       });
   };
-  const updateProduct = (product) => {
-    const originalProduct = [...data];
 
-    setData((prevData) =>
-      prevData.filter((product) => product.id == productId)
-    );
+  const updateProduct = (product) => {
+    const updatedProduct = {
+      id: product.productID,
+      title: product.productName,
+      brand: product.brandName,
+      price: product.productPrice,
+      stock: product.stock,
+    };
+    const index = data.findIndex((p) => p.id === parseInt(product.productID));
+    console.log(index);
+
+    if (index >= 0) {
+      apiClient
+        .put(`/${product.productID}`, updatedProduct)
+        .then((res) => {
+          const updatedData = [...data];
+          updatedData[index] = res.data;
+
+          setData(updatedData);
+
+          console.log(updatedData);
+        })
+        .catch((error) => {
+          setError(error);
+        });
+    } else {
+      console.log("Product not found in the data array.");
+    }
+  };
+
+  const addProduct = (product) => {
+    const newProduct = {
+      title: product.productName,
+      brand: product.brandName,
+      price: product.productPrice,
+      stock: product.stock,
+      category: product.category,
+    };
 
     apiClient
-      .delete(`/products/${productId}`)
+      .post(`/add`, newProduct)
       .then((res) => {
+        const updatedData = [res.data, ...data];
+
+        setData(updatedData);
+
         console.log(res.data);
       })
       .catch((error) => {
-        setData(originalProduct);
         setError(error);
       });
   };
@@ -63,5 +103,5 @@ export const useData = (endpoint) => {
     return () => controller.abort();
   }, [endpoint]);
 
-  return { data, error, isLoading, deleteProduct, updateProduct };
+  return { data, error, isLoading, deleteProduct, updateProduct, addProduct };
 };
